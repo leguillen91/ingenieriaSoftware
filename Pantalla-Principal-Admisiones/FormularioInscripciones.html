@@ -36,7 +36,7 @@
           <a class="nav-link" id="viewForm"  href="#">Inscripcion para Aspirantes</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active"  href="#">Resultados Examenes</a>
+          <a class="nav-link active" id="verificarNota" href="#">Resultados Examenes</a>
         </li>
       </ul>
     </div>
@@ -94,6 +94,7 @@
           </select>
         </div>
 
+
         <div class="mb-3">
           <label for="identidad" class="form-label">Identidad (13 dígitos)</label>
           <input type="text" class="form-control" id="identidad" maxlength="13" required>
@@ -128,6 +129,23 @@
     </div>
   </div>
 
+  <div id="contenedorNota" class="d-none">
+  <div class="form-container text-center">
+    <h4 class="mb-4">Verificación de Nota del Examen</h4>
+    <form id="notaForm">
+      <div class="mb-3">
+        <label for="identidadNota" class="form-label">Número de Identidad</label>
+        <input type="text" id="identidadNota" class="form-control text-center" maxlength="13" placeholder="Ingrese su número de identidad" required>
+      </div>
+      <div class="d-flex justify-content-center gap-3">
+        <button type="submit" class="btn btn-primary">Verificar Nota</button>
+      </div>
+    </form>
+
+    <div id="resultadoNota" class="mt-4"></div>
+  </div>
+</div>
+
   <script>
     const viewForm = document.getElementById('viewForm');
     const contenedorFormulario = document.getElementById('contenedorFormulario');
@@ -145,19 +163,17 @@
       let identidadValida = false;
       let imagenValida = false;
 
-      // Validar identidad (13 dígitos numéricos)
       const idValor = identidad.value.trim();
       if (/^\d{13}$/.test(idValor)) {
         identidadValida = true;
       } else {
         alert('La identidad debe tener exactamente 13 dígitos numéricos.');
       }
-
-      // Validar imagen
+      //imagen
       const archivo = certificado.files[0];
       if (archivo) {
         const tipo = archivo.type;
-        const tamanio = archivo.size; // bytes
+        const tamanio = archivo.size; 
 
         if ((tipo === 'image/jpeg' || tipo === 'image/png') && tamanio <= 1048576) {
           const img = new Image();
@@ -165,7 +181,7 @@
             if (img.width > 0 && img.height > 0) {
               imagenValida = true;
               if (identidadValida && imagenValida) {
-                alert('Datos verificados correctamente ✅');
+                alert('Datos verificados correctamente ');
                 enviarBtn.disabled = false;
               }
             } else {
@@ -187,10 +203,53 @@
 
     document.getElementById('registroForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      alert('✅ Información enviada correctamente.');
+      alert('Información enviada correctamente.');
       e.target.reset();
       enviarBtn.disabled = true;
     });
+
+    const verificarNota = document.getElementById('verificarNota');
+    const contenedorNota = document.getElementById('contenedorNota');
+    const resultadoNota = document.getElementById('resultadoNota');
+    const notaForm = document.getElementById('notaForm');
+
+    // datos para prueba
+    const registroNotas = {
+      "1006200000123": { nombre: "Javiary Ramos", nota: 87 },
+      "0801200100456": { nombre: "María López", nota: 92 }
+    };
+
+    verificarNota.addEventListener('click', () => {
+      contenedorFormulario.classList.add('d-none'); // Oculta el otro formulario 
+      contenedorNota.classList.remove('d-none');
+      contenedorNota.scrollIntoView({ behavior: 'smooth' });
+    });
+
+
+    notaForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const identidadIngresada = document.getElementById('identidadNota').value.trim();
+      resultadoNota.innerHTML = ""; 
+
+      if (!/^\d{13}$/.test(identidadIngresada)) {
+        resultadoNota.innerHTML = `<div class="alert alert-warning">⚠️ La identidad debe tener exactamente 13 dígitos numéricos.</div>`;
+        return;
+      }
+
+      const usuario = registroNotas[identidadIngresada];
+      if (usuario) {
+        resultadoNota.innerHTML = `
+          <div class="alert alert-success text-start">
+            <strong>Resultado encontrado:</strong><br>
+            Nombre: ${usuario.nombre}<br>
+            Nota obtenida: <strong>${usuario.nota}</strong> / 100
+          </div>
+        `;
+      } else {
+        resultadoNota.innerHTML = `<div class="alert alert-danger">❌ No se encontró ningún registro con ese número de identidad.</div>`;
+      }
+    });
+
   </script>
 <script src="	https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
