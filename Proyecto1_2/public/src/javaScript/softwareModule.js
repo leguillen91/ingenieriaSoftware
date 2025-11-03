@@ -1,8 +1,12 @@
 export function renderSistemasModule(contenedor) {
   const section = document.createElement("section");
   section.innerHTML = `
-    <h4 class="text-primary mt-4 mb-3">💻 Módulo de Sistemas</h4>
-    <form id="formSistemas" class="mb-4 border rounded p-3 bg-light">
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+      <button id="btnMostrarFormulario" class="btn btn-success">Subir recurso</button>
+    </div>
+
+
+    <form id="formSistemas" class="mb-4 border rounded p-3 bg-light" style="display: none;">
       <div class="row g-3">
         <div class="col-md-6">
           <input type="text" id="autor" class="form-control" placeholder="Autor" required>
@@ -19,14 +23,24 @@ export function renderSistemasModule(contenedor) {
       </div>
       <button class="btn btn-primary mt-3" type="submit">Subir Recurso</button>
     </form>
+
     <div id="listaRecursos"></div>
+ 
   `;
 
   contenedor.appendChild(section);
 
   const form = section.querySelector("#formSistemas");
   const lista = section.querySelector("#listaRecursos");
+  const btnMostrar = section.querySelector("#btnMostrarFormulario");
 
+  btnMostrar.addEventListener("click", () => {
+    form.style.display = "block"; 
+    btnMostrar.style.display = "none"; 
+  });
+
+
+  
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
